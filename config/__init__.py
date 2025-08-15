@@ -1,0 +1,46 @@
+"""
+Configuration package for MCP RAG Application
+"""
+from .settings import (
+    OPENAI_API_KEY,
+    SUPABASE_URL, 
+    SUPABASE_KEY,
+    OPENAI_MODEL,
+    EMBEDDING_MODEL,
+    TEMPERATURE,
+    STREAMING,
+    CHUNKS_TABLE,
+    CHUNKS_QUERY_FUNCTION,
+    VECTOR_SEARCH_LIMIT,
+    DEFAULT_SEARCH_RESULTS,
+    WEB_SEARCH_RESULTS,
+    CHAT_LINES,
+    CHAT_SCALE,
+    SIDEBAR_SCALE,
+    METRIC_PATTERNS,
+    SYSTEM_PROMPT,
+    EXAMPLE_QUERIES,
+    validate_config
+)
+
+__all__ = [
+    "OPENAI_API_KEY",
+    "SUPABASE_URL",
+    "SUPABASE_KEY", 
+    "OPENAI_MODEL",
+    "EMBEDDING_MODEL",
+    "TEMPERATURE",
+    "STREAMING",
+    "CHUNKS_TABLE",
+    "CHUNKS_QUERY_FUNCTION",
+    "VECTOR_SEARCH_LIMIT",
+    "DEFAULT_SEARCH_RESULTS",
+    "WEB_SEARCH_RESULTS",
+    "CHAT_LINES",
+    "CHAT_SCALE",
+    "SIDEBAR_SCALE",
+    "METRIC_PATTERNS",
+    "SYSTEM_PROMPT",
+    "EXAMPLE_QUERIES",
+    "validate_config"
+]
