@@ -19,6 +19,8 @@ class ChatHandler:
         self.retriever = retriever
         self.current_chat_id = None
     
+
+    
     async def stream_answer_with_tools(self, user_msg: str) -> AsyncGenerator[str, None]:
         """Generate streaming response using OpenAI function calling"""
         
@@ -54,6 +56,7 @@ class ChatHandler:
                 for tool_call in initial_message.tool_calls:
                     function_name = tool_call.function.name
                     arguments = json.loads(tool_call.function.arguments)
+                    print(f"DEBUG: AI calling initial function: {function_name} with args: {arguments}")
                     
                     yield f"📋 **{function_name}**: {arguments.get('query', 'Executing...')}\n"
                     
@@ -63,6 +66,9 @@ class ChatHandler:
                         kwargs["retriever"] = self.retriever
                     
                     result = execute_function_call(function_name, arguments, **kwargs)
+                    print(f"DEBUG: Initial function {function_name} execution result: {result.get('success', 'unknown')}")
+                    if not result.get('success', False):
+                        print(f"DEBUG: Initial function execution failed: {result.get('error', 'unknown error')}")
                     function_calls_made.append({
                         "function": function_name,
                         "arguments": arguments,
@@ -106,6 +112,7 @@ class ChatHandler:
                         for tool_call in response.choices[0].message.tool_calls:
                             function_name = tool_call.function.name
                             arguments = json.loads(tool_call.function.arguments)
+                            print(f"DEBUG: AI calling function: {function_name} with args: {arguments}")
                             
                             yield f"🛠️ **Calling:** {function_name}\n"
                             
@@ -115,6 +122,9 @@ class ChatHandler:
                                 kwargs["retriever"] = self.retriever
                             
                             result = execute_function_call(function_name, arguments, **kwargs)
+                            print(f"DEBUG: Function {function_name} execution result: {result.get('success', 'unknown')}")
+                            if not result.get('success', False):
+                                print(f"DEBUG: Function execution failed: {result.get('error', 'unknown error')}")
                             function_calls_made.append({
                                 "function": function_name,
                                 "arguments": arguments,
@@ -173,7 +183,10 @@ class ChatHandler:
                     'extract_performance_metrics': '📊 Performance Analysis',
                     'create_performance_comparison': '⚖️ Performance Comparison',
                     'create_performance_chart': '📈 Chart Generation',
-                    'synthesize_research_report': '📋 Report Synthesis'
+                    'synthesize_research_report': '📋 Report Synthesis',
+                    'get_financial_data': '💰 Financial Data',
+                    'compare_financial_assets': '💹 Financial Comparison',
+                    'create_financial_chart': '📊 Financial Chart'
                 }
                 
                 # Get unique friendly names (avoid duplicates)
@@ -233,6 +246,8 @@ class ChatHandler:
                             chart_base64 = data.get('chart_base64')
                             title = data.get('title', 'Performance Chart')
                             yield f"\n\n📊 **{title}:**\n![{title}](data:image/png;base64,{chart_base64})"
+                        
+
             
         except Exception as e:
             error_msg = f"Error: {str(e)}"

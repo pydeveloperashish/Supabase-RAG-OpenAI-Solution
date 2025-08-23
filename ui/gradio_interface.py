@@ -28,7 +28,7 @@ class GradioInterface:
             with gr.Row():
                 # Chat area
                 with gr.Column(scale=CHAT_SCALE):
-                    chat_window = gr.Chatbot(label="Chat", height=600, container=True)
+                    chat_window = gr.Chatbot(label="Chat", height=600, container=True, type="messages")
                 
                 # Sidebar
                 with gr.Column(scale=SIDEBAR_SCALE):
@@ -48,6 +48,8 @@ class GradioInterface:
                     - ⚖️ **Comparison Tools** - Compare technologies
                     - 📈 **Chart Generation** - Create visual comparisons
                     - 📋 **Report Generation** - Synthesize findings
+                    - 💰 **Financial Data** - Real-time stock/crypto data
+                    - 💹 **Financial Charts** - Price trends & comparisons
                     """)
                     
                     gr.Markdown("### 💡 Example Queries")
@@ -74,8 +76,8 @@ class GradioInterface:
             if history is None:
                 history = []
             
-            # Add user message to history
-            history = history + [[user_input, None]]
+            # Add user message to history (messages format)
+            history = history + [{"role": "user", "content": user_input}]
             yield history
             
             # Get bot response
@@ -84,7 +86,10 @@ class GradioInterface:
                 async for partial in self.chat_handler.stream_answer_with_tools(user_input):
                     bot_response += partial
                     # Update the last message (bot response) in history
-                    current_history = history[:-1] + [[user_input, bot_response]]
+                    current_history = history[:-1] + [
+                        {"role": "user", "content": user_input},
+                        {"role": "assistant", "content": bot_response}
+                    ]
                     yield current_history
             
             # Use asyncio.run for simple execution
@@ -99,7 +104,10 @@ class GradioInterface:
                 yield result
                 
         except Exception as e:
-            error_history = history[:-1] + [[user_input, f"Error: {str(e)}"]]
+            error_history = history[:-1] + [
+                {"role": "user", "content": user_input},
+                {"role": "assistant", "content": f"Error: {str(e)}"}
+            ]
             yield error_history
     
     def _select_chat(self, title: str) -> list:
@@ -111,7 +119,7 @@ class GradioInterface:
                     break
             return self._load_chat_history_as_list()
         except Exception as e:
-            return [["System", f"Error loading chat: {str(e)}"]]
+            return [{"role": "assistant", "content": f"Error loading chat: {str(e)}"}]
     
     def _new_chat(self) -> tuple:
         """Create a new chat"""
@@ -119,7 +127,7 @@ class GradioInterface:
             self.chat_handler.create_new_chat()
             return [], gr.update(choices=self._get_chat_titles())
         except Exception as e:
-            return [["System", f"Error creating chat: {str(e)}"]], gr.update(choices=[])
+            return [{"role": "assistant", "content": f"Error creating chat: {str(e)}"}], gr.update(choices=[])
     
     def _load_chat_history(self) -> str:
         """Load chat history for current chat (legacy method)"""
@@ -147,20 +155,20 @@ class GradioInterface:
                 while i < len(msgs):
                     if msgs[i]["role"] == "user":
                         user_msg = msgs[i]["content"]
-                        bot_msg = ""
+                        history.append({"role": "user", "content": user_msg})
                         # Look for corresponding bot message
                         if i + 1 < len(msgs) and msgs[i + 1]["role"] == "bot":
                             bot_msg = msgs[i + 1]["content"]
+                            history.append({"role": "assistant", "content": bot_msg})
                             i += 2
                         else:
                             i += 1
-                        history.append([user_msg, bot_msg])
                     else:
                         i += 1
                 return history
             return []
         except Exception as e:
-            return [["System", f"Error loading chat history: {str(e)}"]]
+            return [{"role": "assistant", "content": f"Error loading chat history: {str(e)}"}]
     
     def _get_chat_titles(self) -> list:
         """Get list of chat titles"""

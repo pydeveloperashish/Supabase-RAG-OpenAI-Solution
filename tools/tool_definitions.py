@@ -147,5 +147,60 @@ AVAILABLE_TOOLS = [
                 "required": ["document_results", "web_results"]
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_financial_data",
+            "description": "Fetch real-time financial data for stocks or cryptocurrencies including prices, performance metrics, and historical data",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "symbol": {
+                        "type": "string",
+                        "description": "Stock symbol (e.g., 'TSLA', 'AAPL') or crypto symbol (e.g., 'BTC', 'ETH')"
+                    },
+                    "period": {
+                        "type": "string",
+                        "description": "Time period for data ('1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max')",
+                        "default": "1y"
+                    },
+                    "data_type": {
+                        "type": "string", 
+                        "description": "Type of financial instrument ('stock' or 'crypto')",
+                        "default": "stock"
+                    }
+                },
+                "required": ["symbol"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "compare_financial_assets",
+            "description": "Compare multiple stocks or cryptocurrencies to analyze relative performance and create comparison data",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "symbols": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "List of symbols to compare (e.g., ['TSLA', 'NVDA'] or ['BTC', 'ETH'])"
+                    },
+                    "period": {
+                        "type": "string",
+                        "description": "Time period for comparison ('1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max')",
+                        "default": "1y"
+                    },
+                    "data_types": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "List of data types for each symbol (['stock', 'crypto', ...]). Defaults to 'stock' for all."
+                    }
+                },
+                "required": ["symbols"]
+            }
+        }
     }
 ]
