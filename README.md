@@ -9,4 +9,7 @@ Transform your document analysis workflow with an AI assistant that can:
 - 📈 Generate professional comparison charts
 - 📋 Create comprehensive research reports
 
-Built with OpenAI Assistant API, Supabase, and modern Python stack.
+Built with OpenAI Assistant API, Supabase, and modern Python3.13 stack.
+
+
+
